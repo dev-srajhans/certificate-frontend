@@ -1,0 +1,76 @@
+{
+  "applicant": {
+    "firstName": "राम",
+    "middleName": "शंकर",
+    "lastName": "पाटील",
+    "village": "पुणे",
+    "taluka": "पुणे",
+    "district": "पुणे",
+    "mobileNumber": "9876543210"
+  },
+  "projectAffectedPerson": {
+    "name": "राम शंकर पाटील",
+    "projectId": 1,
+    "projectName": "पुणे-नाशिक कालवा प्रकल्प",
+    "projectPurpose": "कालवा"
+  },
+  "certificateHolders": [
+    {
+      "id": "holder-1",
+      "fullName": {
+        "firstName": "राम",
+        "middleName": "शंकर",
+        "lastName": "पाटील"
+      },
+      "relationToPAP": "स्वतः",
+      "relationToApplicant": "स्वतः",
+      "certificatePurpose": "शिक्षण",
+      "isCertificateHolder": true
+    },
+    {
+      "id": "holder-2",
+      "fullName": {
+        "firstName": "सीता",
+        "middleName": "",
+        "lastName": "पाटील"
+      },
+      "relationToPAP": "पत्नी",
+      "relationToApplicant": "पत्नी",
+      "certificatePurpose": "नौकरी",
+      "isCertificateHolder": false
+    }
+  ],
+  "affectedLand": {
+    "village": "पुणे",
+    "taluka": "पुणे",
+    "district": "पुणे",
+    "surveyGroupNumber": "123/45",
+    "areaInHectares": "2.5",
+    "houseNumber": "123",
+    "areaInSquareMeters": "25000"
+  },
+  "documents": {
+    "AADHAR_CARD_COPY": null,
+    "PAN_CARD_COPY": null,
+    "VOTER_ID_COPY": null,
+    "RATION_CARD_COPY": null,
+    "INCOME_CERTIFICATE": null,
+    "CASTE_CERTIFICATE": null,
+    "DOMICILE_CERTIFICATE": null,
+    "LAND_DOCUMENTS": null,
+    "BANK_PASSBOOK": null,
+    "PASSPORT_PHOTO": null,
+    "EXECUTIVE_ENGINEER_CERTIFICATE": null,
+    "LAND_ACQUISITION_NOTICE": null,
+    "LAND_ACQUISITION_OFFICER_CERTIFICATE": null,
+    "VILLAGE_FORM_7_12_8A": null,
+    "DEATH_CERTIFICATE_HEIR_DOCUMENTS": null,
+    "OTHER_AFFECTED_CONSENT": null,
+    "PROJECT_AFFECTED_AFFIDAVIT": null,
+    "NOMINEE_TC": null
+  },
+  "submittedBy": "test_user",
+  "submittedAt": null,
+  "applicationId": null,
+  "status": "draft"
+}
