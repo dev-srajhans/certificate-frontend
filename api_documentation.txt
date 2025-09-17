@@ -1,0 +1,742 @@
+# Pramanpatra Manager Backend API Documentation
+
+## Base URL
+```
+http://localhost:5008/api
+```
+
+## Authentication
+Most endpoints require authentication using JWT Bearer token in the Authorization header:
+```
+Authorization: Bearer <your_jwt_token>
+```
+
+---
+
+## 🔐 Authentication Routes
+
+### 1. User Login
+- **URL:** `POST /auth/login`
+- **Description:** Authenticate user and get JWT token
+- **Request Body:**
+```json
+{
+    "email": "user@example.com",
+    "password": "password123"
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "Login successful",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "user": {
+            "User_id": 1,
+            "User_Email": "user@example.com",
+            "First_Name": "John",
+            "Access_Level": "user",
+            "Access_control_id": "encrypted_access_control_id"
+        }
+    }
+}
+```
+
+### 2. User Registration
+- **URL:** `POST /auth/signup`
+- **Description:** Register new user account
+- **Request Body:**
+```json
+{
+    "email": "newuser@example.com",
+    "password": "password123",
+    "firstName": "John",
+    "lastName": "Doe"
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "User registered successfully",
+    "data": {
+        "User_id": 2,
+        "User_Email": "newuser@example.com",
+        "First_Name": "John"
+    }
+}
+```
+
+---
+
+## 📋 Certificate Application Routes
+
+### 1. Submit New Application
+- **URL:** `POST /certificate-applications/submit`
+- **Description:** Submit a new certificate application
+- **Request Body:**
+```json
+{
+    "applicant": {
+        "firstName": "John",
+        "middleName": "M",
+        "lastName": "Doe",
+        "village": "Village Name",
+        "taluka": "Taluka Name",
+        "district": "District Name",
+        "mobileNumber": "1234567890"
+    },
+    "projectAffectedPerson": {
+        "name": "PAP Name",
+        "projectId": 1,
+        "projectPurpose": "कालवा"
+    },
+    "certificateHolders": [
+        {
+            "name": "Holder Name",
+            "relationship": "Son",
+            "age": 25,
+            "gender": "Male"
+        }
+    ],
+    "affectedLand": {
+        "village": "Land Village",
+        "taluka": "Land Taluka",
+        "district": "Land District",
+        "surveyGroupNumber": "SG123",
+        "areaInHectares": 2.5,
+        "houseNumber": "H123",
+        "areaInSquareMeters": 25000
+    },
+    "submittedBy": 1,
+    "submittedAt": "2024-01-15T10:30:00Z",
+    "status": 1
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "अर्ज यशस्वीरित्या सबमिट झाला",
+    "data": {
+        "applicationId": "APP-2024-001",
+        "status": "submitted",
+        "submittedAt": "2024-01-15T10:30:00Z"
+    }
+}
+```
+
+### 2. Get Application by ID
+- **URL:** `GET /certificate-applications/:applicationId`
+- **Description:** Get complete application details by ID
+- **Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "id": 123,
+        "applicationNumber": "APP-2024-001",
+        "status": "submitted",
+        "createdAt": "2024-01-15T10:30:00Z",
+        "submittedAt": "2024-01-15T10:30:00Z",
+        "applicant": {
+            "firstName": "John",
+            "middleName": "M",
+            "lastName": "Doe",
+            "village": "Village Name",
+            "taluka": "Taluka Name",
+            "district": "District Name",
+            "mobileNumber": "1234567890"
+        },
+        "projectAffectedPerson": {
+            "name": "PAP Name",
+            "projectId": 1,
+            "projectName": "Project Name",
+            "projectPurpose": "कालवा"
+        },
+        "affectedLand": {
+            "village": "Land Village",
+            "taluka": "Land Taluka",
+            "district": "Land District",
+            "surveyGroupNumber": "SG123",
+            "areaInHectares": 2.5,
+            "houseNumber": "H123",
+            "areaInSquareMeters": 25000
+        },
+        "certificateHolders": [...],
+        "documents": [...]
+    }
+}
+```
+
+### 3. Update Application
+- **URL:** `PUT /certificate-applications/:applicationId`
+- **Description:** Update existing application (only if not approved/rejected)
+- **Request Body:** Same as submit application
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "अर्ज यशस्वीरित्या अपडेट झाला"
+}
+```
+
+### 4. Submit Draft Application
+- **URL:** `POST /certificate-applications/:applicationId/submit`
+- **Description:** Submit a draft application
+- **Request Body:**
+```json
+{
+    "submittedBy": 1,
+    "submittedAt": "2024-01-15T10:30:00Z"
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "Draft submitted successfully",
+    "data": {
+        "applicationId": "APP-2024-001",
+        "status": "submitted"
+    }
+}
+```
+
+### 5. Upload Document
+- **URL:** `POST /certificate-applications/:applicationId/upload-document`
+- **Description:** Upload document for application
+- **Request:** Multipart form data
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "Document uploaded successfully",
+    "data": {
+        "documentId": 1,
+        "fileName": "document.pdf",
+        "fileSize": 1024000
+    }
+}
+```
+
+### 6. Delete Document
+- **URL:** `DELETE /certificate-applications/:applicationId/documents/:documentId`
+- **Description:** Delete document from application
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "Document deleted successfully"
+}
+```
+
+---
+
+## 👤 User Dashboard Routes
+
+### 1. Get User Applications
+- **URL:** `POST /certificate-applications/user/applications`
+- **Description:** Get all applications for authenticated user (dashboard cards)
+- **Request Body:**
+```json
+{
+    "userId": "1",
+    "filters": {
+        "status": "submitted",
+        "limit": 10
+    }
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "applicationId": "APP-2024-001",
+            "applicationNumber": "APP-2024-001",
+            "status": "submitted",
+            "createdAt": "2024-01-15T10:30:00Z",
+            "submittedAt": "2024-01-15T10:30:00Z",
+            "applicantName": "John Doe",
+            "papName": "PAP Name",
+            "projectName": "Project Name"
+        }
+    ]
+}
+```
+
+### 2. Get User Status Updates
+- **URL:** `POST /certificate-applications/user/status-updates`
+- **Description:** Get recent status updates for authenticated user
+- **Request Body:**
+```json
+{
+    "userId": "1"
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": "update-1",
+            "applicationId": "APP-2024-001",
+            "applicationType": "पुनर्वसन प्रमाणपत्र",
+            "status": "submitted",
+            "statusMessage": "अर्ज सबमिट झाले",
+            "updatedAt": "2024-01-15T10:30:00Z",
+            "color": "#2196f3",
+            "priority": 2
+        }
+    ]
+}
+```
+
+---
+
+## 🏗️ Project Routes
+
+### 1. Get All Projects
+- **URL:** `GET /certificate-applications/projects`
+- **Description:** Get all active projects
+- **Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "Prakalpa_id": 1,
+            "prakalpa_nav": "Project Name",
+            "description": "Project Description",
+            "is_active": true
+        }
+    ]
+}
+```
+
+### 2. Get Projects for Dropdown
+- **URL:** `GET /certificate-applications/projects/dropdown`
+- **Description:** Get projects formatted for dropdown
+- **Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "value": 1,
+            "label": "Project Name"
+        }
+    ]
+}
+```
+
+### 3. Get Project by ID
+- **URL:** `GET /certificate-applications/projects/:projectId`
+- **Description:** Get specific project details
+- **Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "Prakalpa_id": 1,
+        "prakalpa_nav": "Project Name",
+        "description": "Project Description",
+        "is_active": true,
+        "created_at": "2024-01-15T10:30:00Z"
+    }
+}
+```
+
+### 4. Search Projects
+- **URL:** `GET /certificate-applications/projects/search?q={searchTerm}`
+- **Description:** Search projects by name
+- **Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "Prakalpa_id": 1,
+            "prakalpa_nav": "Project Name"
+        }
+    ]
+}
+```
+
+---
+
+## 👨‍💼 Admin Routes
+
+### 1. Get All Applications (Admin)
+- **URL:** `POST /certificate-applications/admin/list`
+- **Description:** Get all applications with pagination and filters
+- **Request Body:**
+```json
+{
+    "filters": {
+        "status": "submitted",
+        "search": "John",
+        "page": 1,
+        "limit": 10
+    }
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "applications": [...],
+        "pagination": {
+            "total": 100,
+            "page": 1,
+            "limit": 10,
+            "totalPages": 10
+        }
+    }
+}
+```
+
+### 2. Update Application Status (Admin)
+- **URL:** `PUT /certificate-applications/:applicationId/status`
+- **Description:** Update application status with review notes
+- **Request Body:**
+```json
+{
+    "status": "approved",
+    "reviewNotes": "Application approved after verification",
+    "reviewedBy": 1
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "अर्जाची स्थिती यशस्वीरित्या अपडेट झाली",
+    "data": {
+        "applicationId": "APP-2024-001",
+        "applicationNumber": "APP-2024-001",
+        "status": "approved",
+        "reviewedAt": "2024-01-15T10:30:00Z"
+    }
+}
+```
+
+### 3. Get Application Statistics (Admin)
+- **URL:** `POST /certificate-applications/admin/statistics`
+- **Description:** Get application statistics for admin dashboard
+- **Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "totalApplications": 100,
+        "pendingApplications": 25,
+        "approvedApplications": 60,
+        "rejectedApplications": 15,
+        "statusDistribution": {
+            "draft": 10,
+            "submitted": 25,
+            "under_review": 20,
+            "approved": 60,
+            "rejected": 15
+        }
+    }
+}
+```
+
+### 4. Create Project (Admin)
+- **URL:** `POST /certificate-applications/projects`
+- **Description:** Create new project
+- **Request Body:**
+```json
+{
+    "prakalpa_nav": "New Project",
+    "description": "Project description"
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "Project created successfully",
+    "data": {
+        "Prakalpa_id": 2,
+        "prakalpa_nav": "New Project"
+    }
+}
+```
+
+### 5. Update Project (Admin)
+- **URL:** `PUT /certificate-applications/projects/:projectId`
+- **Description:** Update existing project
+- **Request Body:**
+```json
+{
+    "prakalpa_nav": "Updated Project Name",
+    "description": "Updated description"
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "Project updated successfully"
+}
+```
+
+### 6. Delete Project (Admin)
+- **URL:** `DELETE /certificate-applications/projects/:projectId`
+- **Description:** Soft delete project
+- **Response:**
+```json
+{
+    "success": true,
+    "message": "Project deleted successfully"
+}
+```
+
+### 7. Get Project Statistics (Admin)
+- **URL:** `GET /certificate-applications/projects/admin/statistics`
+- **Description:** Get project-wise application statistics
+- **Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "projectId": 1,
+            "projectName": "Project Name",
+            "totalApplications": 50,
+            "approvedApplications": 30,
+            "pendingApplications": 20
+        }
+    ]
+}
+```
+
+---
+
+## 🔧 Legacy Admin Routes
+
+### 1. Get Pramanpatra Data
+- **URL:** `POST /admin/pramanpatra` or `GET /admin/pramanpatra`
+- **Description:** Get paginated pramanpatra data with filtering/sorting
+- **Request Body (POST):**
+```json
+{
+    "page": 1,
+    "pageSize": 10,
+    "filterModel": {
+        "items": [
+            {
+                "columnField": "prakalp_grast_nav",
+                "operatorValue": "contains",
+                "value": "John"
+            }
+        ]
+    },
+    "sortModel": [
+        {
+            "field": "created_dt",
+            "sort": "desc"
+        }
+    ]
+}
+```
+- **Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "rows": [...],
+        "total": 100
+    }
+}
+```
+
+### 2. Export Pramanpatra Data
+- **URL:** `POST /admin/export_pramanpatra`
+- **Description:** Export filtered pramanpatra data
+- **Request Body:** Same as get pramanpatra data
+- **Response:** CSV file download
+
+### 3. Save Pramanpatra
+- **URL:** `POST /admin/savePramanpatra`
+- **Description:** Save new pramanpatra record
+- **Request Body:**
+```json
+{
+    "prakalp_grast_nav": "Person Name",
+    "prakalpa_nav": "Project Name",
+    "shet_jamin_gav": "Village",
+    "shet_jamin_serve_gut": "Survey Group",
+    "shet_jamin_shetra": 2.5
+}
+```
+
+### 4. Update Certificate
+- **URL:** `PUT /admin/updateCertificate`
+- **Description:** Update existing certificate
+- **Request Body:** Same as save pramanpatra
+
+### 5. Get Projects (Legacy)
+- **URL:** `GET /admin/getProjects`
+- **Description:** Get all projects for legacy admin interface
+
+### 6. Get Grast Names
+- **URL:** `GET /admin/getGrastNames`
+- **Description:** Get list of affected person names
+
+---
+
+## 🏥 Health Check
+
+### 1. Health Check
+- **URL:** `GET /health`
+- **Description:** Check API health status
+- **Response:**
+```json
+{
+    "status": "ok",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "environment": "development",
+    "routes": {
+        "admin": "loaded",
+        "auth": "loaded",
+        "certificateApplications": "loaded"
+    }
+}
+```
+
+---
+
+## 📝 Error Responses
+
+### Standard Error Format
+```json
+{
+    "success": false,
+    "message": "Error description in Marathi",
+    "error": "Technical error details"
+}
+```
+
+### Common HTTP Status Codes
+- `200` - Success
+- `400` - Bad Request (validation errors)
+- `401` - Unauthorized (invalid/missing token)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found
+- `500` - Internal Server Error
+
+### Validation Error Format
+```json
+{
+    "success": false,
+    "message": "Validation failed",
+    "errors": {
+        "fieldName": "Error description"
+    }
+}
+```
+
+---
+
+## 🔐 Authentication Flow
+
+1. **Login** → Get JWT token
+2. **Include token** in all subsequent requests:
+   ```
+   Authorization: Bearer <jwt_token>
+   ```
+3. **Token expires** → Re-login required
+4. **Protected routes** require valid token
+
+---
+
+## 📁 File Upload
+
+### Supported File Types
+- PDF documents
+- Image files (JPG, PNG)
+- Maximum file size: 10MB
+
+### Upload Format
+```javascript
+const formData = new FormData();
+formData.append('document', file);
+formData.append('documentType', 'identity_proof');
+
+const response = await fetch('/certificate-applications/123/upload-document', {
+    method: 'POST',
+    headers: {
+        'Authorization': `Bearer ${token}`
+    },
+    body: formData
+});
+```
+
+---
+
+## 🎯 Frontend Integration Examples
+
+### Login Example
+```javascript
+const login = async (email, password) => {
+    const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+    });
+    
+    const data = await response.json();
+    if (data.success) {
+        sessionStorage.setItem('token', data.data.token);
+        sessionStorage.setItem('User_id', data.data.user.User_id);
+    }
+    return data;
+};
+```
+
+### Submit Application Example
+```javascript
+const submitApplication = async (applicationData) => {
+    const response = await fetch(`${API_URL}/certificate-applications/submit`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+            ...applicationData,
+            submittedBy: sessionStorage.getItem('User_id'),
+            submittedAt: new Date(),
+            status: 1
+        })
+    });
+    
+    return await response.json();
+};
+```
+
+### Get Application Details Example
+```javascript
+const getApplicationDetails = async (applicationId) => {
+    const response = await fetch(`${API_URL}/certificate-applications/${applicationId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        }
+    });
+    
+    return await response.json();
+};
+```
